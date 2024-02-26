@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Form</title>
+<style>
+  .error {
+    color: red;
+  }
+</style>
+</head>
+<body>
+
+<h2>JavaScript Form Example</h2>
+
+<form id="myForm">
+  <div id="statements"></div><br>
+
+  <label for="personalStatement">Personalized Statement:</label><br>
+  <textarea id="personalStatement" name="personalStatement" rows="4" cols="50"></textarea><br><br>
+
+  <label for="name">Name:</label><br>
+  <input type="text" id="name" name="name"><br>
+  <span id="nameError" class="error"></span><br>
+
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email"><br>
+  <span id="emailError" class="error"></span><br>
+
+  <button type="button" onclick="validateForm()">Submit</button>
+</form>
+
+<script>
+// Fetching CSV file
+fetch('statements.csv')
+  .then(response => response.text())
+  .then(data => {
+    // Splitting CSV data by new line
+    const statements = data.split('\n');
+    const statementsDiv = document.getElementById('statements');
+
+    // Creating checkboxes for each statement
+    statements.forEach((statement, index) => {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = 'statement' + (index + 1);
+      checkbox.name = 'statement' + (index + 1);
+      
+      const label = document.createElement('label');
+      label.htmlFor = 'statement' + (index + 1);
+      label.textContent = statement.trim();
+
+      statementsDiv.appendChild(checkbox);
+      statementsDiv.appendChild(label);
+      statementsDiv.appendChild(document.createElement('br'));
+    });
+  })
+  .catch(error => console.error('Error loading statements:', error));
+
+function validateForm() {
+  var name = document.getElementById("name").value;
+  var email = document.getElementById("email").value;
+  var nameError = document.getElementById("nameError");
+  var emailError = document.getElementById("emailError");
+  var isValid = true;
+
+  // Reset previous error messages
+  nameError.innerHTML = "";
+  emailError.innerHTML = "";
+
+  // Validate name
+  if (name === "") {
+    nameError.innerHTML = "Name is required";
+    isValid = false;
+  }
+
+  // Validate email
+  if (email === "") {
+    emailError.innerHTML = "Email is required";
+    isValid = false;
+  } else if (!isValidEmail(email)) {
+    emailError.innerHTML = "Invalid email address";
+    isValid = false;
+  }
+
+  // If form is valid, submit
+  if (isValid) {
+    document.getElementById("myForm").submit();
+  }
+}
+
+function isValidEmail(email) {
+  // Very basic email validation, you might want to improve it
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+</script>
+
+</body>
+</html>
